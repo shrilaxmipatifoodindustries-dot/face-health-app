@@ -7,7 +7,7 @@ import google.generativeai as genai
 
 # --- CONFIGURATION ---
 # ⚠️ YAHAN APNI KEY DAAL (Double quotes ke andar)
-genai.configure(api_key="AIzaSyDhXYEFVj1zVy0AIVwUTLO4mMBLEqz6-_k")
+genai.configure(api_key="AIzaSyCUBXWRMFGeUUSfH4ZDYaDbZqHH8rT5WUI")
 
 # Model Setup
 generation_config = {
