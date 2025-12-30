@@ -14,6 +14,7 @@ navigator.mediaDevices.getUserMedia({video:true})
   recorder.onstop=upload;
   recorder.start();
 
+  // 15 seconds recording
   setTimeout(()=>stop(),15000);
 })
 .catch(()=>status.innerText="Camera permission denied");
@@ -30,7 +31,8 @@ function upload(){
  data.append("video",blob);
  data.append("user",user);
 
-fetch("http://127.0.0.1:5000/upload",{method:"POST",body:data});
+ // FIX: Sirf "/upload" use kar, taaki live server pe chale
+ fetch("/upload", {method:"POST", body:data});
 
  status.innerText="Saved successfully";
  chunks=[];
