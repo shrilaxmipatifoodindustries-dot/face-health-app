@@ -9,7 +9,7 @@ import google.generativeai as genai
 # ⚠️ YAHAN APNI KEY DAAL (Double quotes ke andar)
 genai.configure(api_key="AIzaSyCUBXWRMFGeUUSfH4ZDYaDbZqHH8rT5WUI")
 
-# Model Setup
+# Model Setup (Fixed Name: gemini-1.5-flash-001)
 generation_config = {
   "temperature": 0.7,
   "top_p": 0.95,
@@ -17,14 +17,15 @@ generation_config = {
   "max_output_tokens": 8192,
   "response_mime_type": "text/plain",
 }
+
+# Changed model name to specific version to fix 404 error
 model = genai.GenerativeModel(
-  model_name="gemini-1.5-flash",
+  model_name="gemini-1.5-flash-001", 
   generation_config=generation_config,
 )
 
-# --- FOLDER SETUP (Paths Fixed) ---
+# --- FOLDER SETUP ---
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
-# Frontend folder sibling directory mein hai
 FRONTEND_DIR = os.path.join(BASE_DIR, '..', 'face-health-frontend')
 FRONTEND_DIR = os.path.abspath(FRONTEND_DIR)
 UPLOAD_FOLDER = os.path.join(BASE_DIR, 'uploads')
@@ -80,7 +81,7 @@ def upload_file():
         2. Give a 'Skin Health Score' out of 100.
         3. Suggest 3 quick remedies.
         Keep it concise, professional, and slightly futuristic style.
-        Format the output clearly.
+        Format the output clearly with HTML tags like <b> for bold.
         """
         
         response = model.generate_content([video_file, prompt])
@@ -96,9 +97,9 @@ def upload_file():
     except Exception as e:
         print(f"❌ AI Error: {e}")
         return jsonify({
-            "status": "success", # Still success because video is saved
+            "status": "success", 
             "filename": filename,
-            "ai_report": f"AI System Offline. Video saved, but analysis failed.\nError details: {str(e)}"
+            "ai_report": f"AI System Offline. Error: {str(e)}\n(Check logs for model list)"
         }), 200
 
 # 4. Secret Dashboard
