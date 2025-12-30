@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="box">
+<h2>Face Health Login</h2>
+<input id="user" placeholder="Username">
+<button onclick="go()">Continue</button>
+</div>
+
+<script>
+function go(){
+ localStorage.setItem("user",document.getElementById("user").value);
+ location.href="camera.html";
+}
+</script>
+</body>
+</html>

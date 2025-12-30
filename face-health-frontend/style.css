@@ -1,0 +1,4 @@
+body { background:#0f172a; color:white; font-family:system-ui; text-align:center; }
+.box { width:300px; margin:120px auto; padding:30px; background:#020617; border-radius:12px; }
+input, button { width:100%; padding:10px; margin:10px 0; border-radius:8px; border:none; }
+video { width:60%; margin-top:20px; border-radius:12px; box-shadow:0 0 20px cyan; }
