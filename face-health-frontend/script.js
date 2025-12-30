@@ -3,39 +3,51 @@ const user = localStorage.getItem("user") || "Unknown_Agent";
 const status = document.getElementById("status");
 const video = document.getElementById("video");
 const spinner = document.getElementById("spinner");
-const reportCard = document.getElementById("report-card");
-const aiContent = document.getElementById("ai-content");
+const dashboard = document.getElementById("dashboard");
+const scanInterface = document.getElementById("scan-interface");
+const countdownEl = document.getElementById("countdown");
 
-// Start Camera Logic
+// Show Date
+if(document.getElementById("date-display")) {
+    document.getElementById("date-display").innerText = new Date().toDateString();
+}
+
+// Start Camera
 navigator.mediaDevices.getUserMedia({video:true})
 .then(s=>{
   stream=s;
   video.srcObject=stream;
-  status.innerText="🟢 Scanning Face Topology...";
+  status.innerText="🟢 System Online. Analyzing Topology...";
   
   recorder=new MediaRecorder(stream);
   recorder.ondataavailable=e=>chunks.push(e.data);
   recorder.onstop=upload;
   recorder.start();
 
-  // --- TIME REVERTED TO 10 SECONDS (For Speed) ---
-  let timeLeft = 10; 
+  // 10 Seconds Recording
+  let timeLeft = 10;
+  if(countdownEl) countdownEl.classList.remove("hidden");
+  
   const timer = setInterval(() => {
     timeLeft--;
-    status.innerText = ` scaning ${timeLeft}s remaining`;
+    if(countdownEl) countdownEl.innerText = timeLeft;
+    status.innerText = `🔴 Recording Analysis Data... ${timeLeft}s`;
     if(timeLeft <= 0) clearInterval(timer);
   }, 1000);
 
-  // Stop automatically after 10 seconds
-  setTimeout(()=>stop(), 10000); // 10000 ms = 10 seconds
+  setTimeout(()=>stop(), 10000);
 })
-.catch(()=>status.innerText="❌ Camera Access Denied");
+.catch((err)=>{
+    console.error(err);
+    status.innerText="❌ Camera Error. Check Permissions.";
+});
 
 function stop(){
- recorder.stop();
- stream.getTracks().forEach(t=>t.stop());
- status.innerText="Uploading & Analyzing Data...";
+ if(recorder && recorder.state !== 'inactive') recorder.stop();
+ if(stream) stream.getTracks().forEach(t=>t.stop());
+ status.innerText="Uploading to Cloud & Processing 25+ Metrics...";
  if(spinner) spinner.classList.remove("hidden");
+ if(countdownEl) countdownEl.classList.add("hidden");
 }
 
 async function upload(){
@@ -45,36 +57,85 @@ async function upload(){
  data.append("user",user);
 
  try {
-     status.innerText="⏳ Sending to Gemini AI (Wait 10-15s)...";
+     status.innerText="⏳ Generating Holistic Health Report...";
      
-     // Send to Backend
-     const response = await fetch("/upload", {
-         method:"POST", 
-         body:data
-     });
-
+     // 1. Upload Video & Get Main AI Report
+     const response = await fetch("/upload", { method:"POST", body:data });
      const result = await response.json();
      
      if(spinner) spinner.classList.add("hidden");
 
      if(result.status === "success"){
-         status.innerText = "✅ Analysis Complete!";
+         status.style.display = 'none';
+         scanInterface.style.display = 'none'; // Hide camera
+         dashboard.classList.remove("hidden"); // Show Super Dashboard
+
+         // --- POPULATE DATA ---
          
-         if(video) video.style.display = "none"; 
-         if(reportCard) reportCard.classList.remove("hidden");
+         // 1. AI Report & Score
+         // New lines ko HTML break mein convert aur bold tags ko preserve karte hue
+         let formattedReport = result.ai_report.replace(/\n/g, "<br>");
+         document.getElementById("ai-content").innerHTML = formattedReport;
          
-         let formattedReport = result.ai_report ? result.ai_report.replace(/\n/g, "<br>") : "No report generated.";
+         // Score handling
+         document.getElementById("score-val").innerText = result.score || 85;
+
+         // 2. Fetch Extra Features (Parallel)
+         fetchExtras(result.ai_report); // Pass report to guess keywords
          
-         if(aiContent) {
-            aiContent.innerHTML = formattedReport;
-         }
      } else {
-         status.innerText = "⚠️ Server Error: " + (result.message || "Unknown error");
+         status.innerText = "⚠️ Error: " + result.message;
      }
 
  } catch (err) {
      console.error(err);
-     status.innerText = "❌ Connection Failed";
-     if(spinner) spinner.classList.add("hidden");
+     status.innerText = "❌ Server Connection Failed";
  }
+}
+
+// Fetch all the cool new features from Backend APIs
+async function fetchExtras(reportText) {
+    // Determine condition keyword for diet based on report text
+    let condition = "aging";
+    if(reportText && reportText.toLowerCase().includes("acne")) condition = "acne";
+    if(reportText && reportText.toLowerCase().includes("dry")) condition = "dry";
+
+    try {
+        // Call all new APIs in parallel for speed
+        const [yogaRes, dietRes, tipRes, prodRes, ageRes] = await Promise.all([
+            fetch("/face_yoga").then(r=>r.json()),
+            fetch(`/diet/${condition}`).then(r=>r.json()),
+            fetch("/daily_tip").then(r=>r.json()),
+            fetch("/products").then(r=>r.json()),
+            fetch("/skin_age").then(r=>r.json())
+        ]);
+
+        // Update UI Elements
+        if(document.getElementById("yoga-tip")) 
+            document.getElementById("yoga-tip").innerText = yogaRes.exercise;
+        
+        // Diet List
+        if(document.getElementById("diet-plan") && dietRes.plan) {
+            const dietList = dietRes.plan.map(item => `• ${item}`).join("<br>");
+            document.getElementById("diet-plan").innerHTML = dietList;
+        }
+
+        if(document.getElementById("daily-tip"))
+            document.getElementById("daily-tip").innerText = tipRes.tip;
+        
+        if(document.getElementById("skin-age"))
+            document.getElementById("skin-age").innerText = `Est. Skin Age: ${ageRes.estimated_age}`;
+
+        // Products List
+        if(document.getElementById("product-list")) {
+            const prodHtml = `
+                <li>🧼 ${prodRes.cleanser}</li>
+                <li>🧴 ${prodRes.moisturizer}</li>
+                <li>☀️ ${prodRes.sunscreen}</li>
+            `;
+            document.getElementById("product-list").innerHTML = prodHtml;
+        }
+    } catch (e) {
+        console.error("Error fetching extras:", e);
+    }
 }

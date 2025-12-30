@@ -3,32 +3,79 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Face Scan In Progress</title>
+    <title>BioScan Pro</title>
     <link rel="stylesheet" href="style.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 </head>
 <body>
     <div class="scanner-container">
-        <h2><i class="fas fa-expand"></i> Face Health Monitor</h2>
-        
-        <!-- Video Area -->
-        <div class="video-wrapper">
+        <!-- Header -->
+        <div class="header">
+            <h2><i class="fas fa-dna"></i> BioScan AI v2.0</h2>
+            <div id="date-display" class="date-badge"></div>
+        </div>
+
+        <!-- Video Section -->
+        <div id="scan-interface" class="video-wrapper">
             <video id="video" autoplay muted></video>
             <div class="scan-line"></div>
             <div class="overlay-corners"></div>
+            <div id="countdown" class="hidden">10</div>
         </div>
 
-        <!-- Status & Loader -->
+        <!-- Status -->
         <div id="status-box">
             <div id="spinner" class="hidden"><i class="fas fa-circle-notch fa-spin"></i></div>
-            <p id="status">Initializing Neural Engine...</p>
+            <p id="status">Ready to Scan...</p>
         </div>
 
-        <!-- AI Report Section (Initially Hidden) -->
-        <div id="report-card" class="hidden">
-            <h3><i class="fas fa-file-medical-alt"></i> AI Analysis Report</h3>
-            <div id="ai-content"></div>
-            <button onclick="location.reload()">New Scan</button>
+        <!-- RESULT DASHBOARD (Initially Hidden) -->
+        <div id="dashboard" class="hidden">
+            
+            <!-- Score Card -->
+            <div class="card score-card">
+                <h3>Bio-Metric Score</h3>
+                <div class="score-circle">
+                    <span id="score-val">0</span>
+                    <small>/100</small>
+                </div>
+                <p id="skin-age" class="highlight-text"></p>
+            </div>
+
+            <!-- AI Detailed Report -->
+            <div class="card report-card">
+                <h3><i class="fas fa-user-md"></i> Dermatologist Analysis</h3>
+                <div id="ai-content"></div>
+            </div>
+
+            <!-- Action Grid (New Features) -->
+            <div class="grid-container">
+                <!-- Diet -->
+                <div class="card mini-card">
+                    <h4><i class="fas fa-carrot"></i> Diet Plan</h4>
+                    <p id="diet-plan">Loading...</p>
+                </div>
+
+                <!-- Yoga -->
+                <div class="card mini-card">
+                    <h4><i class="fas fa-spa"></i> Face Yoga</h4>
+                    <p id="yoga-tip">Loading...</p>
+                </div>
+
+                <!-- Daily Tip -->
+                <div class="card mini-card">
+                    <h4><i class="fas fa-lightbulb"></i> Daily Tip</h4>
+                    <p id="daily-tip">Loading...</p>
+                </div>
+
+                <!-- Products -->
+                <div class="card mini-card">
+                    <h4><i class="fas fa-pump-soap"></i> Recommended</h4>
+                    <ul id="product-list"></ul>
+                </div>
+            </div>
+
+            <button onclick="location.reload()" class="retry-btn">Scan Again</button>
         </div>
     </div>
     
