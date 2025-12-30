@@ -22,7 +22,7 @@ navigator.mediaDevices.getUserMedia({video:true})
   let timeLeft = 30; // Yahan time badha diya
   const timer = setInterval(() => {
     timeLeft--;
-    status.innerText = `scaning ${timeLeft}s remaining`;
+    status.innerText = `Scaning ${timeLeft}s remaining`;
     if(timeLeft <= 0) clearInterval(timer);
   }, 1000);
 
