@@ -18,16 +18,16 @@ navigator.mediaDevices.getUserMedia({video:true})
   recorder.onstop=upload;
   recorder.start();
 
-  // --- TIME CHANGED TO 30 SECONDS ---
-  let timeLeft = 30; // Yahan time badha diya
+  // --- TIME REVERTED TO 10 SECONDS (For Speed) ---
+  let timeLeft = 10; 
   const timer = setInterval(() => {
     timeLeft--;
-    status.innerText = `Scaning ${timeLeft}s remaining`;
+    status.innerText = ` scaning ${timeLeft}s remaining`;
     if(timeLeft <= 0) clearInterval(timer);
   }, 1000);
 
-  // Stop automatically after 30 seconds
-  setTimeout(()=>stop(), 30000); // 30000 ms = 30 seconds
+  // Stop automatically after 10 seconds
+  setTimeout(()=>stop(), 10000); // 10000 ms = 10 seconds
 })
 .catch(()=>status.innerText="❌ Camera Access Denied");
 
@@ -45,7 +45,7 @@ async function upload(){
  data.append("user",user);
 
  try {
-     status.innerText="⏳ Sending to Gemini AI (Wait 20-30s)..."; // Time message updated
+     status.innerText="⏳ Sending to Gemini AI (Wait 10-15s)...";
      
      // Send to Backend
      const response = await fetch("/upload", {
