@@ -1,20 +1,44 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BioScan Login</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 </head>
 <body>
-<div class="box">
-<h2>Face Health Login</h2>
-<input id="user" placeholder="Username">
-<button onclick="go()">Continue</button>
-</div>
+    <div class="box login-box">
+        <div class="icon-header">
+            <i class="fas fa-fingerprint"></i>
+        </div>
+        <h2>BioMetric Access</h2>
+        <p class="subtitle">Secure Face Health Analysis</p>
+        
+        <div class="input-group">
+            <i class="fas fa-user"></i>
+            <input id="user" placeholder="Enter Agent ID / Username">
+        </div>
 
-<script>
-function go(){
- localStorage.setItem("user",document.getElementById("user").value);
- location.href="camera.html";
-}
-</script>
+        <div class="features-list">
+            <p><i class="fas fa-check-circle"></i> AI Skin Analysis</p>
+            <p><i class="fas fa-check-circle"></i> Dark Circle Detection</p>
+            <p><i class="fas fa-check-circle"></i> Pigmentation Report</p>
+            <p><i class="fas fa-check-circle"></i> Health Score Calculation</p>
+            <p><i class="fas fa-check-circle"></i> Encrypted Cloud Storage</p>
+            <p><i class="fas fa-check-circle"></i> Instant PDF Generation</p>
+        </div>
+        
+        <button onclick="go()">INITIATE SCAN <i class="fas fa-arrow-right"></i></button>
+    </div>
+
+    <script>
+        function go(){
+            const user = document.getElementById("user").value;
+            if(!user) return alert("Identify yourself!");
+            localStorage.setItem("user", user);
+            location.href="camera.html";
+        }
+    </script>
 </body>
 </html>

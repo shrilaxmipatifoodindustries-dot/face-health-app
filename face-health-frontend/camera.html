@@ -1,12 +1,37 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Face Scan In Progress</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 </head>
 <body>
-<h2>Face Health Monitor</h2>
-<video id="video" autoplay muted></video>
-<p id="status">Requesting camera permission...</p>
-<script src="script.js"></script>
+    <div class="scanner-container">
+        <h2><i class="fas fa-expand"></i> Face Health Monitor</h2>
+        
+        <!-- Video Area -->
+        <div class="video-wrapper">
+            <video id="video" autoplay muted></video>
+            <div class="scan-line"></div>
+            <div class="overlay-corners"></div>
+        </div>
+
+        <!-- Status & Loader -->
+        <div id="status-box">
+            <div id="spinner" class="hidden"><i class="fas fa-circle-notch fa-spin"></i></div>
+            <p id="status">Initializing Neural Engine...</p>
+        </div>
+
+        <!-- AI Report Section (Initially Hidden) -->
+        <div id="report-card" class="hidden">
+            <h3><i class="fas fa-file-medical-alt"></i> AI Analysis Report</h3>
+            <div id="ai-content"></div>
+            <button onclick="location.reload()">New Scan</button>
+        </div>
+    </div>
+    
+    <script src="script.js"></script>
 </body>
 </html>
